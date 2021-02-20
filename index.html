@@ -1,604 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Convert Fritzbox Phonebook Telefonbuch | webservice online</title>
-<meta http-equiv=content-type content="text/html; charset=utf-8" />
-<style> input{ cursor: pointer } .advanced_view{ display:none; }</style>
+    <meta charset="UTF-8">
+    <title>Fritz-Box Converter</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-<!--
- /*
- * Licence 
- *
- * Licence Exception for function "CSVToArray()": unknown licence
- *
- * All other parts:
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- */
-  -->
-<img src="convert_formats.png" style="float:right;padding:6pt;"/>
-<h1 lang="en" class="en">Phonebook Contact convert for Fritzbox</h1>
-<h1 lang="de" class="de" style="display:none">Telefonbuch Kontakte konvertieren für Fritzbox</h1>
-<p lang="en" class="en">Converts Fritzbox-XML-Files to/from .CSV or .VCF(vcard)-File with Phone Numbers.</p>
-<p lang="de" class="de" style="display:none">Konvertiert Fritzbox-XML-Dateien zu/von .CSV oder .VCF(vcard)-Dateien mit Telefonnummer</p>
-<span style="clear:both"></span><br>
-<hr>
-<br>
-Fritzbox XML File:<br>
-<input type="file" id="file-input_xml"  /><br>
-<span style="color:#999999" class="advanced_view">source:</span><br>
-<textarea id="adressbuch_xml"  style="width:80%;height:100pt;color:#999999" class="advanced_view">
-<?xml version="1.0" encoding="utf-8"?>
+<body class="h-100">
+<nav class="navbar navbar-expand-lg mb-3 navbar-light bg-light">
+    <div class="collapse navbar-collapse justify-content-md-center">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <div class="nav-link">
+                    <button type="button" class="btn btn-primary btn-sm mr-1" onClick="convert_to_csv()">convert xml to csv</button>
+                </div>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link">
+                    <button type="button" class="btn btn-secondary btn-sm mr-1" onClick="convert_csv_to_xml()">convert csv to xml</button>
+                </div>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link">
+                    <button type="button" class="btn btn-danger btn-sm" onClick="reset_to_default()">Reset</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main role="main" class="flex-shrink-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="shadow p-3 mb-5 bg-white border border-lightgrey rounded">
+                    <div class="d-flex">
+                        <div class="mr-auto h3">XML</div>
+                        <div>
+                            <button type="button" class="btn btn-outline-info btn-sm" onClick="download('xml')">
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider mt-2 mb-4"></div>
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="file-input_xml"
+                                   aria-describedby="inputGroupFileAddon01">
+                            <label class="custom-file-label" for="file-input_xml">Choose XML file</label>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-2" style="align-items: center;">
+                        <label class="switch mb-0">
+                            <input type="checkbox" checked id="xml_editor_switch">
+                            <span class="slider round"></span>
+                        </label>
+                        <p class="mb-0 ml-1">XML Editor</p>
+                    </div>
+                    <textarea id="xml_editor" class="form-control font-weight-lighter" style="font-size: 12px;"
+                              rows="15">
+<?xml version="1.0" encoding="UTF-8"?>
 <phonebooks>
-<phonebook owner="" name="phonebook1">
-<contact>
-<category>0</category>
-<person><realName>Person A</realName></person>
-<telephony nid="1"><number type="mobile" prio="1" id="0">017611111</number></telephony>
-<services /><setup />
-<features doorphone="0" /><mod_time>1535972380</mod_time><uniqueid>227</uniqueid>
-</contact>
-<contact>
-<category>0</category>
-<person><realName>Person B</realName></person>
-<telephony nid="1"><number type="mobile" prio="1" id="0">0176222222</number></telephony>
-<services /><setup />
-<features doorphone="0" /><mod_time>1535972450</mod_time><uniqueid>229</uniqueid>
-</contact>
-</phonebook>
-</phonebooks>
-</textarea>
-
-
-
-<!-- ↓↑ ⇓⇑ ⇩⇧ ⟱ ⟰ ⬆⬇ -->
-<br>
-<div class="advanced_view">
-<input type="button" value="⬇ Convert to csv" onClick="convert_to_csv()"/>  &nbsp;
-<input type="button" value="⬇ Convert to vcf (vcard v2.1)" onClick="convert_to_vcf(2.1)"/>  &nbsp;
-<input type="button" value="⬇ Convert to vcf (vcard v4.0)" onClick="convert_to_vcf(4.0)"/>  &nbsp;
-<input type="button" value="⇧ Convert csv to xml" onClick="convert_csv_to_xml()"/>   &nbsp;  
-<input type="button" value="⇧ Convert vcf to xml" onClick="convert_vcf_to_xml()"/>   &nbsp;  
-<input type="button" value="✖ Reset to Test-Values" title="reset to default" onClick="reset_to_default()"/>
-</div>
-<br><br>
-CSV File:<br>
-<input type="file" id="file-input_csv"  /><br>
-<span style="color:#999999" class="advanced_view">source:</span><br>
-<textarea id="adressbuch_csv" style="width:80%;height:100pt;color:#999999" class="advanced_view">
+   <phonebook>
+      <contact>
+         <category>0</category>
+         <person>
+            <realName>Person A</realName>
+         </person>
+         <telephony nid="1">
+            <number type="mobile" prio="1" id="0">017611111</number>
+         </telephony>
+         <services />
+         <setup />
+         <features doorphone="0" />
+         <mod_time>1535972380</mod_time>
+         <uniqueid>227</uniqueid>
+      </contact>
+      <contact>
+         <category>0</category>
+         <person>
+            <realName>Person B</realName>
+         </person>
+         <telephony nid="1">
+            <number type="mobile" prio="1" id="0">0176222222</number>
+         </telephony>
+         <services />
+         <setup />
+         <features doorphone="0" />
+         <mod_time>1535972450</mod_time>
+         <uniqueid>229</uniqueid>
+      </contact>
+   </phonebook>
+</phonebooks></textarea>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="shadow p-3 mb-5 bg-white border border-lightgrey rounded">
+                    <div class="d-flex">
+                        <div class="mr-auto h3">CSV</div>
+                        <div>
+                            <button type="button" class="btn btn-outline-info btn-sm" onClick="download('csv')">
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider mt-2 mb-4"></div>
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="file-input_csv"
+                                   aria-describedby="inputGroupFileAddon01">
+                            <label class="custom-file-label" for="file-input_csv">Choose CSV file</label>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-2" style="align-items: center;">
+                        <label class="switch mb-0">
+                            <input type="checkbox" checked id="csv_editor_switch">
+                            <span class="slider round"></span>
+                        </label>
+                        <p class="mb-0 ml-1">CSV Editor</p>
+                    </div>
+                    <textarea class="form-control" class="form-control font-weight-lighter" style="font-size: 12px;" id="csv_editor" rows="15">
 "Person C", "080333333"
-"Person D", "080444444"
-</textarea>
-</div>
-
-<br><br>
-VCF File:<br>
-<input type="file" id="file-input_vcf"  /><br>
-<span style="color:#999999" class="advanced_view">source:</span><br>
-<textarea id="adressbuch_vcf" style="width:80%;height:100pt;color:#999999" class="advanced_view">
-BEGIN:VCARD
-VERSION:4.0
-N:Person E
-FN:Person E
-TEL;TYPE=WORK;VOICE:09055555
-NOTE:importantContact(fritzbox)
-END:VCARD
-BEGIN:VCARD
-VERSION:2.1
-N:Person=20F
-FN:Person=20F
-TEL;VOICE:09066666
-NOTE:importantContact(fritzbox)
-END:VCARD
-
-</textarea>
-</div>
-
-<p align="right" id="show_advanced_view_link_wrapper" >
-<span lang="en" class="en"></span>
-<span lang="de" class="de" style="display:none"></span>
-<a href="#" onclick="show_advanced_view('show');return false">
-<span lang="en" class="en">show source Window</span><span lang="de" class="de" style="display:none;text-decoration:underline;">Text-Fenster zeigen</span></a>
-<span lang="de" class="de" style="display:none"> </span>
-</p>
-
-<input type="button" id="file-input_reset" style="display:none;margin-top:22pt" value="reset" onClick="reset_to_default()" />
-
-<p id="show_advanced_view_link_link_close"  align="right" style="display:none" >
-<a href="#" onclick="show_advanced_view('hide');return false">Text-Fenster X (close)</a>
-</p>
-<script type='application/ld+json'>
-{
-	"@context": "http://schema.org/",
-	"@type": "WebApplication",
-	"applicationCategory": "UtilitiesApplication",
-	"applicationSubCategory": "convert",
-	"screenshot": "https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv_vcf/convert_formats.png",
-	"isAccessibleForFree": "true",
-	"license": "AGPL",
-	"description": "router fritzbox phonebook converter",
-	"name": "convert phonebook fritzbox",
-	"mainEntityOfPage":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv_vcf/",
-	"url":"https://soerenj.github.io/fritzbox_phonebook_convert_xml_csv_vcf/",
-	"SoftwareSourceCode": "https://github.com/soerenj/fritzbox_phonebook_convert_xml_csv_vcf"
-	"programmingLanguage": "javascript"
-}
-</script>
-
-<script language="JavaScript">
-<!--
-var uploaded_xml_filename = '';
-var uploaded_csv_filename = '';
-var uploaded_vcf_filename = '';
-
-function reset_to_default(){
- document.getElementById('adressbuch_xml').value = document.getElementById('adressbuch_xml').defaultValue;
- document.getElementById('adressbuch_csv').value = document.getElementById('adressbuch_csv').defaultValue;
- document.getElementById('adressbuch_vcf').value = document.getElementById('adressbuch_vcf').defaultValue;
- document.getElementById('file-input_xml').value='';document.getElementById('file-input_csv').value='';document.getElementById('file-input_vcf').value=''
-}
-
-
-function convert_to_csv(){
- var text = document.getElementById('adressbuch_xml').value;
- parser = new DOMParser();
- xmlDoc = parser.parseFromString(text, "text/xml");
-
- var out, contacts, contact, person, telephony, telefone_numbers, telefone_numbers_type, telefone_numbers_prio, phone;
- out = '';
- var contacts = xmlDoc.getElementsByTagName("contact");
- for(i=0;i<contacts.length;i++)
- {
-  contact = contacts[i];
-  person = contact.getElementsByTagName("person")[0].getElementsByTagName("realName")[0].firstChild.nodeValue;
-  telephony = contact.getElementsByTagName("telephony")[0].getElementsByTagName("number");
-  //telefone_numbers = Array(); telefone_numbers_type = Array(); telefone_numbers_prio = Array();
-  out += '"'+person.replace('"','\\"')+'"';
-  for(j=0;j<telephony.length;j++){
-   //telefone_numbers.push (  telephony[i].firstChild.nodeValue );
-   //telefone_numbers_type.push (  telephony[i].getAttribute('type') );
-   //telefone_numbers_prio.push (  telephony[i].getAttribute('prio') );
-   phone = telephony[j].firstChild.nodeValue;
-   out += ", "+ '"'+phone.replace('"','\\"')+'"';;
-  }
-  out += "\n";
- }
- document.getElementById('adressbuch_csv').value = out;
- 
- download('csv',out);
-}
-
-function convert_to_vcf(v=2.1){ //=vcard (v=Version)
- var text = document.getElementById('adressbuch_xml').value;
- parser = new DOMParser();
- xmlDoc = parser.parseFromString(text, "text/xml");
-
- var out, contacts, contact, person, telephony, telefone_numbers, telefone_numbers_type, telefone_numbers_prio, phone, tmp;
- out = '';
- var contacts = xmlDoc.getElementsByTagName("contact");
- for(i=0;i<contacts.length;i++)
- {
-  out += 'BEGIN:VCARD\n';
-  if(v==2.1)out += 'VERSION:2.1\n';
-  if(v>2.1)out += 'VERSION:4.0\n';
-  contact = contacts[i];
-  person = contact.getElementsByTagName("person")[0].getElementsByTagName("realName")[0].firstChild.nodeValue;
-  telephony = contact.getElementsByTagName("telephony")[0].getElementsByTagName("number");
-  tmp = person.replace('\n','');
-  if(v==2.1)tmp = encodeURI(tmp).replace(/%/g,'=');
-  out += 'N:'+tmp+'\n';
-  out += 'FN:'+tmp+'\n';
-  for(j=0;j<telephony.length;j++){
-   out += "TEL;";
-   if(v==2.1)if(telephony[j].getAttribute('type')!=undefined) out += ''+telephony[j].getAttribute('type').toUpperCase()+';';
-   if(v>2.1)if(telephony[j].getAttribute('type')!=undefined) out += 'TYPE='+telephony[j].getAttribute('type').toUpperCase()+';';
-   out += "VOICE:"+telephony[j].firstChild.nodeValue+'\n';
-  }
-  if(telephony.length>0 && telephony[0].getAttribute('prio')!='')out += "NOTE:importantContact(fritzbox)\n";
-  services = Array();
-  if(contact.getElementsByTagName("services").length>0)services = contact.getElementsByTagName("services")[0].getElementsByTagName("email");
-  for(j=0;j<services.length;j++){
-   tmp = services[j].firstChild.nodeValue;
-   if(v==2.1)tmp = encodeURI(tmp).replace(/%/g,'=');
-   out += "EMAIL:"+tmp+'\n';
-  }
-  out += "END:VCARD\n";
- }
- document.getElementById('adressbuch_vcf').value = out;
- 
- download('vcf',out);
-}
-
-function convert_vcf_to_xml(){
-  //config
- var vcf_use_which_name = 'FN'; // F or FN 
-
- var text = document.getElementById('adressbuch_vcf').value;
- var person, email, v;
- var out = '';
- out += '<?xml version="1.0" encoding="utf-8"?>\n<phonebooks>\n<phonebook owner="" name="convertedFromXml">\n';
- var contacts = text.split('BEGIN:VCARD');
- for(i=0;i<contacts.length;i++)
- {
-  if(contacts[i]=='')continue;
-  var c = contacts[i];
-  var elements = contacts[i].split(/\n|\r\n/);
-  var personOut='';
-  var phoneOut = '';
-  var EmailOut='';
-  var typeOut = '';
-  var v = '';
-  var prio=false;
-  
-  for(j=0;j<elements.length;j++){ //handle utf8 hex code
-    if(elements[j].search(/CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:/)>=0){
-        var match = elements[j].match("(.*);(CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE):(.*)");
-        var splited = match[3].split("=");
-        for(var k=0;k<splited.length;k++)
-        {
-          splited[k] = splited[k].replace(/;/g,""); //;;; is (mostly?) only on end of line
-        }
-    
-        var str = '';
-        for(var k=0;k<splited.length;k++){
-        if(splited[k].length==0)continue;
-        if(splited[k].toUpperCase()=='C2' || splited[k].toUpperCase()=='C3')
-        {
-            var hex=splited[k]+splited[k+1];
-            try{
-                str+= decodeURIComponent(hex.replace(/(..)/g,'%$1'))
-            }catch(e){console.log('invalid hex input: ' + hex)}
-            k++;
-            continue;
-        }
-        str+=String.fromCharCode('0x'+splited[k]);
-        }
-   
-        elements[j] = match[1]+':'+str;
-        
-     }
-  }
-  
-  for(j=0;j<elements.length;j++){
-    var str = elements[j];
-    if(str.substr(0,3)=='FN:' && vcf_use_which_name=='FN'){
-        strOut=str.substr(3);
-        while( strOut.substr(0,1)==";" ) strOut = strOut.substr(1); //remove beginning/starting ;;;
-        while( strOut.substr(-1)==";")   strOut = strOut.substr(0,str.length-1); //remove ending ;;;
-        personOut = '<person><realName>'+strOut+'</realName></person>\n';
-    }
-    if(str.substr(0,2)=='N:' && vcf_use_which_name=='N'){
-        strOut=str.substr(2);
-        while( strOut.substr(0,1)==";" ) strOut = strOut.substr(1); //remove beginning/starting ;;;
-        while( strOut.substr(-1)==";")   strOut = strOut.substr(0,str.length-1); //remove ending ;;;
-        personOut = '<person><realName>'+strOut+'</realName></person>\n';
-    }
-    
-    if(str.substr(0,3)=='TEL'){
-        var type=''; var typeRow='';
-        if(str.substr(0,9)=='TEL;TYPE='){
-        //var next_sim=str.substr(0,9)
-        var nextDoppelpunkt = str.substr(10).indexOf(':');
-        var nextSimokolon   = str.substr(10).indexOf(';');
-        var end_c = nextDoppelpunkt;
-        if(nextSimokolon>0 && nextSimokolon<nextDoppelpunkt)end_c = nextSimokolon;
-        if(end_c>0){
-            typeRow = str.substr(9,end_c+1);
-            if(typeRow.indexOf(',')>0){
-                var sub = typeRow.split(',');
-                for(k=0;k<sub.length;k++){
-                    if(sub[k]=='WORK')     type='WORK';
-                    if(sub[k]=='HOME')     type='HOME';
-                    if(sub[k]=='MOBILE')   type='MOBILE';
-                    if(sub[k]=='FAX_WORK') type='FAX_WORK';
-                }
-            } else type=typeRow;
-            typeOut='type="'+type.toLowerCase()+'"';
-        }
-        }
-        /*else if(str.substr(0,4)=='TEL;'){
-        //var next_sim=str.substr(0,9)
-        var endType = str.substr(5).indexOf(':');
-        var simokolon = str.substr(5).indexOf(';');
-        if(endType>3 && simokolon==0)type=' TYPE="'+str.substr(9,endType-1)+'"';
-        }*/
-        var start = str.indexOf(':');
-        phoneOut += '<number '+typeOut+' id="'+j+'">'+str.substr(start+1)+'</number>\n';
-    }
-    if(str.substr(0,8)=='VERSION:')v=str.substr(8);
-    if(str.substr(0,5)=='NOTE:' && str.indexOf('importantContact(fritzbox)')>0)prio=true;
-    if(str.substr(0,5)=='EMAIL'){
-        var startEmail = str.substr(4).indexOf(':');
-        //if(startEmail>=0 && str.length>9)EmailOut+='<email>'+str.substr(startEmail+1)+'</email>';
-    }
-  }
-  
-  var catNumber=0;  if(prio) catNumber = 1;
-  out += '<contact>\n<category>'+catNumber+'</category>\n';
-  if(prio)phoneOut=phoneOut.replace(/(<number[^>]*)(>)/,'$1 prio="1">');
-  if(v==2.1)personOut = personOut.replace(/=/g,'%');
-  if(v==2.1)personOut = decodeURI(personOut);
-  out += personOut+'<telephony nid="'+i+'">\n' + phoneOut;
-  if(EmailOut!='') EmailOut='<services>'+EmailOut+'<services>';
-  out += '</telephony>\n'+EmailOut+'<setup />\n<features doorphone="0" /><mod_time></mod_time><uniqueid></uniqueid>\n</contact>\n';
- }
- out += '</phonebook>\n</phonebooks>';
- document.getElementById('adressbuch_xml').value = out;
-
- download('xml',out);
-}
-
-
-
-function convert_csv_to_xml(){
- var text = document.getElementById('adressbuch_csv').value;
- var out = ''; var person;
- out += '<?xml version="1.0" encoding="utf-8"?>\n<phonebooks>\n<phonebook owner="" name="convertedFromXml">\n';
- var contacts = CSVToArray(text);
- for(i=0;i<contacts.length;i++)
- {
-  if(contacts[i]=='')continue;
-  out += '<contact>\n<category>0</category>\n';
-  var elements = contacts[i];
-  person = elements[0].substring(1);
-  person = person.replace(/^\s+|\s+$/gm,''); //trim spaces
-  person = person.replace(/^"+|"+$/gm,''); //trim "
-  out += '<person><realName>'+person+'</realName></person>\n';
-  out += '<telephony nid="'+i+'">\n';
-  for(j=1;j<elements.length;j++){
-   var phone = elements[j];
-   if(j==elements.length-1)phone = phone.substring(0,phone.length-1);
-   phone = phone.replace(/^\s+|\s+$/gm,''); //trim spaces
-   phone = phone.replace(/^"+|"+$/gm,''); //trim "
-   out += '<number>'+phone+'</number>\n';
-  }
-  out += '</telephony>\n<services /><setup />\n<features doorphone="0" /><mod_time></mod_time><uniqueid></uniqueid>\n</contact>\n';
- }
- out += '</phonebook>\n</phonebooks>';
- document.getElementById('adressbuch_xml').value = out;
-
- download('xml',out);
-}
-
-
-function download(filename, text) {
-
-  if(filename=='xml'){
-   filename = 'adressbuch_for_fritzbox_xml.xml';
-   if(uploaded_csv_filename!=''){
-    var lin = uploaded_csv_filename.split('\\');
-    var win = uploaded_csv_filename.split('/');
-    if(lin.length>win.length) filename = lin[lin.length-1];
-    else filename = win[lin.length-1];
-    filename += "_converted_.xml";
-   }
-   if(uploaded_vcf_filename!=''){
-    var lin = uploaded_vcf_filename.split('\\');
-    var win = uploaded_vcf_filename.split('/');
-    if(lin.length>win.length) filename = lin[lin.length-1];
-    else filename = win[lin.length-1];
-    filename += "_converted_.xml";
-   }
-  }
-  if(filename=='csv' || filename=='vcf'){
-   var filename_ending = filename;
-   filename = 'adressbuch_from_fritzbox.'+filename_ending;
-   if(uploaded_xml_filename!=''){ console.log(uploaded_xml_filename);
-    var lin = uploaded_xml_filename.split('\\');
-    var win = uploaded_xml_filename.split('/');
-    if(lin.length>win.length) filename = lin[lin.length-1];
-    else filename = win[lin.length-1];
-    filename += "_converted_."+filename_ending;
-   }
-  }
-
-  var element = document.createElement('a');
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  element.setAttribute('download', filename);
-
-  element.style.display = 'none';
-  document.body.appendChild(element);
-
-  element.click();
-
-  document.body.removeChild(element);
-}
-
-// reference: https://www.bennadel.com/blog/1504-ask-ben-parsing-csv-strings-with-javascript-exec-regular-expression-command.htm
-// (( ref: http://stackoverflow.com/a/1293163/2343 ))
-// This will parse a delimited string into an array of
-// arrays. The default delimiter is the comma, but this
-// can be overriden in the second argument.
-function CSVToArray( strData, strDelimiter ){
-    // Check to see if the delimiter is defined. If not,
-    // then default to comma.
-    strDelimiter = (strDelimiter || ",");
-
-    // Create a regular expression to parse the CSV values.
-    var objPattern = new RegExp(
-        (
-            // Delimiters.
-            "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
-
-            // Quoted fields.
-            "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
-
-            // Standard fields.
-            "([^\\" + strDelimiter + "\\r\\n]*))"
-        ),
-        "gi"
-        );
-
-
-    // Create an array to hold our data. Give the array
-    // a default empty first row.
-    var arrData = [[]];
-
-    // Create an array to hold our individual pattern
-    // matching groups.
-    var arrMatches = null;
-
-
-    // Keep looping over the regular expression matches
-    // until we can no longer find a match.
-    while (arrMatches = objPattern.exec( strData )){
-
-        // Get the delimiter that was found.
-        var strMatchedDelimiter = arrMatches[ 1 ];
-
-        // Check to see if the given delimiter has a length
-        // (is not the start of string) and if it matches
-        // field delimiter. If id does not, then we know
-        // that this delimiter is a row delimiter.
-        if (
-            strMatchedDelimiter.length &&
-            strMatchedDelimiter !== strDelimiter
-            ){
-
-            // Since we have reached a new row of data,
-            // add an empty row to our data array.
-            arrData.push( [] );
-
-        }
-
-        var strMatchedValue;
-
-        // Now that we have our delimiter out of the way,
-        // let's check to see which kind of value we
-        // captured (quoted or unquoted).
-        if (arrMatches[ 2 ]){
-
-            // We found a quoted value. When we capture
-            // this value, unescape any double quotes.
-            strMatchedValue = arrMatches[ 2 ].replace(
-                new RegExp( "\"\"", "g" ),
-                "\""
-                );
-
-        } else {
-
-            // We found a non-quoted value.
-            strMatchedValue = arrMatches[ 3 ];
-
-        }
-
-
-        // Now that we have our value string, let's add
-        // it to the data array.
-        arrData[ arrData.length - 1 ].push( strMatchedValue );
-    }
-
-    // Return the parsed data.
-    return( arrData );
-}
-
-
-
-function readSingleFile(e) {
-  document.getElementById('file-input_reset').style.display='block';
-  var file = e.target.files[0];
-  if (!file) {
-    return;
-  }
-  var reader = new FileReader();
-  if(e.target.id=='file-input_xml'){
-    uploaded_xml_filename = document.getElementById(e.target.id).value;
-    reader.onload = function(e) {
-      var contents = e.target.result;
-      document.getElementById('adressbuch_xml').value = contents;
-      //alert('here your csv file');
-      if( confirm("as .csv?") )convert_to_csv();
-      else if( confirm("as .vcf?") ){
-        if( confirm("as .vcf? (version 2.1?)") )convert_to_vcf(2.1);
-		else if( confirm("as .vcf? (version 4.0?)") )convert_to_vcf(4.0);
-      }
-    };
-  }
-  if(e.target.id=='file-input_csv'){
-    uploaded_csv_filename = document.getElementById(e.target.id).value;
-    reader.onload = function(e) {
-      var contents = e.target.result;
-      document.getElementById('adressbuch_csv').value = contents;
-      //alert('here your xml file');
-      convert_csv_to_xml();
-    };
-  }
-  if(e.target.id=='file-input_vcf'){
-    uploaded_csv_filename = document.getElementById(e.target.id).value;
-    reader.onload = function(e) {
-      var contents = e.target.result;
-      document.getElementById('adressbuch_vcf').value = contents;
-      //alert('here your xml file');
-      convert_vcf_to_xml();
-    };
-  }
-  reader.readAsText(file);
-}
-
-
-document.getElementById('file-input_xml')
-  .addEventListener('change', readSingleFile, false);
-document.getElementById('file-input_csv')
-  .addEventListener('change', readSingleFile, false);
-document.getElementById('file-input_vcf')
-  .addEventListener('change', readSingleFile, false);
-
-
-
-//if source manuell changed, remove filename
-document.getElementById('adressbuch_xml')
-  .addEventListener('change', function reset_filename_xml(){ uploaded_xml_filename = ''; }, false);
-document.getElementById('adressbuch_csv')
-  .addEventListener('change', function reset_filename_csv(){ uploaded_csv_filename = ''; }, false);
-document.getElementById('adressbuch_vcf')
-  .addEventListener('change', function reset_filename_vcf(){ uploaded_vcf_filename = ''; }, false);
-
-//document.getElementById('file-input_xml').value='';
-//document.getElementById('file-input_csv').value='';
-//document.getElementById('file-input_vcf').value='';
-//reset_to_default();
-
-function show_advanced_view(state){
- var e = document.getElementsByClassName('advanced_view');
- for(i=0;i<e.length;i++){
-  if(state=='show')e[i].style.display='inline-block';
-  if(state=='hide')e[i].style.display='';
- }
- if(state=='show'){
-   document.getElementById("show_advanced_view_link_wrapper").style.display='none';
-   document.getElementById("show_advanced_view_link_link_close").style.display='block';
- }
- if(state=='hide'){
-   document.getElementById("show_advanced_view_link_wrapper").style.display='';
-   document.getElementById("show_advanced_view_link_link_close").style.display='none';
- }
-}
-
-//-->
-</script>
-<br><br><br>
-<footer>
-<span style="display:block;bottom:2pt;padding:2pt;font-size:10pt;">
-<a href="https://github.com/soerenj/fritzbox_phonebook_convert_xml_csv_vcf/" style="padding-right:4pt;float:right">fork me</a>
-<!--<em style="color:#ababab;float:right;padding-right:10pt; ">file process only name & phone number</em>-->
-<details lang="en" class="en"><summary onClick="window.scrollBy(0, 100);window.setTimeout('window.scrollBy(0, 100);',50)" title="more privacy info" style="cursor:pointer;color:#999999">Full Privacy</summary><div style="color:#999999">You Privacy are keept: works just offline (pure javascript). But anyway, bedder check the code or <a href="commits/master" title="commit/version-history on github">History</a>, in case this account are was hacked.<br>You are still unsure, using this? Open the Browser in Privacy/Incognito-Mode, open this page, go offline and do you file-convertation. And after it close all Privacy/Incognito-Mode-Windows.</div></details>
-<details lang="de" class="de" style="display:none"><summary onClick="window.scrollBy(0, 100);window.setTimeout('window.scrollBy(0, 100);',50)" title="more privacy info" style="cursor:pointer;color:#999999">voller Datenschutz</summary><div style="color:#999999">Datenschutz ist gewahrt: arbeitet als offline-Programm (reines javascript). Aber natürlich trotzdem, besser den Programmcode oder <a href="https://github.com/soerenj/fritzbox_phonebook_convert_xml_csv_vcf/commits/master">Versions-Verlauf</a> prüfen, für den Fall das dieser Account gehackt wurde.<br>Immernoch unsicher das hier zu nutzen? Den Browser im Privaten/Incognito-Modus öffnen, diese Seite öffnen, offline gehen und die Daten konvertieren. Und dannach alle Privacy/Incognito-Modus-Fenster schließen.</div></details>
+"Person D", "080444444"</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="footer">
+    <div class="container text-center">
+        <p class="copyright text-muted small">
+            This is a redesigned and updated version based on <a href="https://github.com/soerenj/fritzbox_phonebook_convert_xml_csv_vcf">Soerenj Repository</a>. Tested with Fritzbox version 07.21.
+        </p>
+    </div>
 </footer>
-</span>
-<script language="JavaScript">
-//replace with german content
-var language = window.navigator.userLanguage || window.navigator.language;
-if(language.substring(0,2)=='de'){
- var e = document.getElementsByClassName('de');
- for(i=0;i<e.length;i++){
-  e[i].style.display='inline-block';
- }
- var e = document.getElementsByClassName('en');
- for(i=0;i<e.length;i++){
-  e[i].style.display='none';
- }
-}
+</body>
+
+<script src="js/custom.js"></script>
+<script>
+    document.getElementById('file-input_xml').addEventListener('change', readSingleFile, false);
+    document.getElementById('file-input_csv').addEventListener('change', readSingleFile, false);
+
+    document.getElementById('xml_editor_switch').addEventListener('change', expand_editor, false);
+    document.getElementById('csv_editor_switch').addEventListener('change', expand_editor, false);
+
+    function expand_editor(e) {
+        let className = e.target.id.split("_switch")[0]
+        document.getElementById(className).classList.toggle("d-none");
+    }
 </script>
+</html>
