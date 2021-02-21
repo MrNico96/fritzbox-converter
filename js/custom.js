@@ -1,16 +1,3 @@
-function helloWorld(){
-    console.log("Hello World!");
-}
-
-
-function getXmlData(){
-    return document.getElementById('xml_editor').value;
-}
-
-function getCsvData(){
-    return document.getElementById('csv_editor').value;
-}
-
 function readSingleFile(e) {
     var file = e.target.files[0];
     if (!file) {
@@ -131,16 +118,16 @@ function download(type) {
     var text = null;
     switch (type) {
         case 'csv':
-            text = getCsvData();
+            text = document.getElementById('csv_editor').value;
             break;
         case 'xml':
-            text = getXmlData();
+            text = document.getElementById('xml_editor').value;
             break;
     }
 
     let element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', "filename."+type);
+    element.setAttribute('download', "phonebook."+type);
 
     element.style.display = 'none';
     document.body.appendChild(element);
